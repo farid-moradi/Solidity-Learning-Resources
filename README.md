@@ -238,7 +238,7 @@ contract MyToken is AbstractToken {
 
 ## Gas and Immutability
 - The EVM executes the contract code as it processes the transactions within a newly mined block.
-- Regardless of whether the specified gas limit is greater than the actual gas consumed during the transaction execution, the sender is still required to pay for the full gas limit.
+- Gas limit is paid for upfront, regardless of how much gas is actually consumed during execution. Even if the actual gas consumed ends up being less than the specified gas limit, the sender still has to pay for the entire gas limit they set. Any unused gas is refunded to the sender.
 - Once deployed, a smart contract is considered immutable. Therefore, smart contracts must be designed to be flexible, extensible, and maintainable, as there are costs associated with running them on the Ethereum network.
 
 ## Smart Contract Security
@@ -389,46 +389,26 @@ contract Simple {
 
 An Ethereum node runs a client like Geth, utilizing levelDB to store the world state.
 
-## Contract Creation
-
 - Upon compiling the code for a contract, an ABI and bytecode are generated. The contract is then deployed on the Ethereum network (main or test) by sending a transaction with an empty `to` field, including the contract's bytecode in the `data` field. A unique contract address is generated upon deployment.
-
-## Transaction Initiation
 
 - A user initiates a transaction to call the `addX` function of the `Simple` contract, specifying the gas limit for the transaction.
 
-## Transaction Sending
-
 - The transaction is broadcasted to the Ethereum network, containing the contract address in the `to` field, the function selector for `addX` in the `data` field, and the specified gas limit.
-
-## Transaction Inclusion in Block
 
 - A miner includes the transaction in a block and attempts to mine the block. The gas limit acts as a constraint for the miner's block selection process.
 
-## Block Mining
-
 - The miner successfully mines the block by solving a cryptographic puzzle. The block includes the transaction calling the `addX` function and other transactions.
-
-## Execution Attempt
 
 - During block validation, the Ethereum Virtual Machine (EVM) executes the bytecode associated with the `addX` function.
 
-## Gas Consumption Check
-
 - The gas consumed during function execution is tracked. If it exceeds the gas limit specified in the transaction, the transaction fails due to an "Out of Gas" error.
-
-## State Update Attempt
 
 - If the gas consumed is within the gas limit, the state variable `x` is incremented by 1 as specified in the function.
 
-## World State Update
-
 - The updated state of the `Simple` contract, including the incremented value of `x`, is added to the miner's copy of the blockchain and propagated to other nodes.
-
-## Consensus and Synchronization
 
 - Other nodes in the network receive the newly mined block, verify its validity, and update their own copies of the blockchain and world state to match the newly mined block. Consensus mechanisms ensure agreement among nodes, maintaining the integrity and security of the blockchain.
 
 ## View Functions
 
-If the function being called is a `view` function and does not change the state of the world state, you can call it directly from your Ethereum client without creating a transaction. However, if the function modifies the state, then you will need to create a transaction and go through the process of mining and block inclusion, even if the state changes are minimal or non-existent.
+- If the function being called is a `view` function and does not change the state of the world state, you can call it directly from your Ethereum client without creating a transaction. However, if the function modifies the state, then you will need to create a transaction and go through the process of mining and block inclusion, even if the state changes are minimal or non-existent.
